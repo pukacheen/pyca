@@ -25,6 +25,8 @@ from pycolab import ascii_art
 from pycolab import human_ui
 from pycolab.prefab_parts import sprites as prefab_sprites
 
+from pyca import robo_ui
+
 GAME_ART = ['..P...................']
 
 def make_game():
@@ -65,15 +67,23 @@ class PlayerSprite(prefab_sprites.MazeWalker):
             the_plot.terminate_episode()
 
 
+class RandomAgent:
+    def decide(self):
+        return 1
+
 class SimpleEnvironment:
     def __init__(self):
         self._game = make_game()
 
-    def step(self, action):
-        pass
-
-    def reset(self):
-        pass
+    def play_as_robot(self):
+        # Make a UI that supports robot actions
+        # -1 (no key) means the bot gets to choose an action
+        ui = robo_ui.CursesUi(
+            keys_to_actions={curses.KEY_LEFT: 0, curses.KEY_RIGHT: 1},
+            delay=200,
+            agent=RandomAgent()
+        )
+        ui.play(self._game)
 
     def play(self):
         # Make a CursesUi to play it with.
@@ -90,7 +100,7 @@ def main(argv=()):
 
     # Build a chain-walk game.
     game = SimpleEnvironment()
-    game.play()
+    game.play_as_robot()
 
 
 if __name__ == '__main__':
